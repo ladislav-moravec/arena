@@ -29,3 +29,27 @@ class Kostka:
         V základu je definován, ale nyní nevrátí cestu ale to, co definujeme.
         """
         return str("Kostka s {0} stěnami".format(self.__pocet_sten))
+
+
+class Bojovnik:
+    """
+    Třída reprezentuje bojovníka do arény.
+    """
+
+    def __init__(self, jmeno, zivot, utok, obrana, kostka):
+        """
+        :param jmeno: jméno bojovnéka
+        :param zivot: maximální život bojovníka
+        :param utok: útok bojovníka
+        :param obrana: obrana bojovníka
+        :param kostka: instance kostky
+        """
+        self.__jmeno = jmeno
+        self.__zivot = zivot
+        self.__max_zivot = zivot
+        self.__utok = utok
+        self.__obrana = obrana
+        self.__kostka = kostka
+
+        def __str__(self):
+            return str(self.__jmeno)
