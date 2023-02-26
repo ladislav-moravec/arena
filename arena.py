@@ -52,10 +52,27 @@ class Bojovnik:
         self.__kostka = kostka
 
     def __str__(self):
+        """
+        :return: Jméno bojovníka
+        """
         return str(self.__jmeno)
+
+    def __repr__(self):
+        """
+        :return: V řetězci kód konstruktoru pro funkci eval().
+        """
+        return str("Bojovnik{0}, {1}, {2}, {3}, {4}".format(self.__jmeno,
+                                                            self.__max_zivot,
+                                                            self.__utok,
+                                                            self.__obrana,
+                                                            self.__kostka))
 
     @property
     def nazivu(self):
+        """
+        :return: Vrátí True, pokud je bojovník naživu.
+        Jinak vrátí False.
+        """
         return self.__zivot > 0
 
     def graficky_zivot(self):
