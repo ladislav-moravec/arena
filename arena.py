@@ -51,5 +51,16 @@ class Bojovnik:
         self.__obrana = obrana
         self.__kostka = kostka
 
-        def __str__(self):
-            return str(self.__jmeno)
+    def __str__(self):
+        return str(self.__jmeno)
+
+    @property
+    def nazivu(self):
+        return self.__zivot > 0
+
+    def graficky_zivot(self):
+        celkem = 20
+        pocet = int(self.__zivot / self.__max_zivot * celkem)
+        if pocet == 0 and self.nazivu:
+            pocet = 1
+            return "[{0}{1}]".format("#"*pocet, " "*(celkem-pocet))
