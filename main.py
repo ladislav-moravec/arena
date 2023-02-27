@@ -15,7 +15,13 @@ for _ in range(10):
     print(desetistenna.hod(), end=" ")
 
 kostka = Kostka(10)
+
+print(" \n\n")
 bojovnik = Bojovnik("Zalgoren", 100, 20, 10, kostka)
-print("Bojovník: {0}".format(bojovnik)) # test __str__()
-print("Naživu: {0}".format(bojovnik.nazivu)) # test  nazivu()
-print("Život: {0}".format(bojovnik.graficky_zivot())) # test graficky zivot()
+print("Život: {0}".format(bojovnik.graficky_zivot())) #test graficky_zivot()
+#útok na našeho bojovníka
+souper = Bojovnik("Shadow", 60, 18, 15, kostka)
+souper.utoc(bojovnik)
+print(souper.vrat_posledni_zpravu())
+print(bojovnik.vrat_posledni_zpravu())
+print("Život: {0}".format(bojovnik.graficky_zivot()))
