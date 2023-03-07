@@ -265,3 +265,4 @@ arena = Arena(zalgoren, gandalf, kostka)
 # zápas
 arena.zapas()
 input()
+
