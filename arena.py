@@ -44,13 +44,13 @@ class Bojovnik:
         :param obrana: obrana bojovníka
         :param kostka: instance kostky
         """
-        self.__jmeno = jmeno
-        self.__zivot = zivot
-        self.__max_zivot = zivot
-        self.__utok = utok
-        self.__obrana = obrana
-        self.__kostka = kostka
-        self.__zprava = ""
+        self._jmeno = jmeno
+        self._zivot = zivot
+        self._max_zivot = zivot
+        self._utok = utok
+        self._obrana = obrana
+        self._kostka = kostka
+        self._zprava = ""
 
     def __str__(self):
         """
@@ -171,3 +171,10 @@ class Arena:
                 self.__vypis_zpravu(self.__bojovnik_2.vrat_posledni_zpravu())
                 self.__vypis_zpravu(self.__bojovnik_1.vrat_posledni_zpravu())
             print("")
+
+class Mag(Bojovnik):
+    def __init__(self,jmeno, zivot, utok, obrana, kostka, mana, magicky_utok):
+        super().__init__(jmeno, zivot, utok, obrana, kostka)
+        self.__mana = mana
+        self.__max_mana = mana
+        self.__magicky_utok = magicky_utok

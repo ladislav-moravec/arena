@@ -48,29 +48,29 @@ class Bojovnik:
         obrana - obrana bojovníka
         kostka - instance kostky
         """
-        self.__jmeno = jmeno
-        self.__zivot = zivot
-        self.__max_zivot = zivot
-        self.__utok = utok
-        self.__obrana = obrana
-        self.__kostka = kostka
+        self._jmeno = jmeno
+        self._zivot = zivot
+        self._max_zivot = zivot
+        self._utok = utok
+        self._obrana = obrana
+        self._kostka = kostka
         self.__zprava = ""
 
     def __str__(self):
         """
         Vrátí jméno bojovníka.
         """
-        return str(self.__jmeno)
+        return str(self._jmeno)
 
     def __repr__(self):
         """
         Vrací v řetězci kód konstruktoru pro funkci eval().
         """
-        return str("Bojovnik({0}, {1}, {2}, {3}, {4})".format(self.__jmeno,
-                                                              self.__max_zivot,
-                                                              self.__utok,
-                                                              self.__obrana,
-                                                              self.__kostka))
+        return str("Bojovnik({0}, {1}, {2}, {3}, {4})".format(self._jmeno,
+                                                              self._max_zivot,
+                                                              self._utok,
+                                                              self._obrana,
+                                                              self._kostka))
 
     @property
     def nazivu(self):
@@ -78,46 +78,55 @@ class Bojovnik:
         Vrátí True, pokud je bojovník naživu.
         Jinak vrátí False.
         """
-        return self.__zivot > 0
+        return self._zivot > 0
+
+    def graficky_ukazatel(self, aktualni, maximalni):
+        """
+        Vrátí řetězec s grafickým zobrazením.
+        Parametry:
+        aktualni - aktuální hodnota ukazatele
+        maximalni - maximální hodnota ukazatele
+        """
+        celkem = 20
+        pocet = int(aktualni / maximalni * celkem)
+        if (pocet == 0 and self.nazivu):
+            pocet = 1
+        return "[{0}{1}]".format("#" * pocet, " " * (celkem - pocet))
 
     def graficky_zivot(self):
         """
         Vrátí řetězec s grafickým životem.
         """
-        celkem = 20
-        pocet = int(self.__zivot / self.__max_zivot * celkem)
-        if (pocet == 0 and self.nazivu):
-            pocet = 1
-        return "[{0}{1}]".format("#" * pocet, " " * (celkem - pocet))
+        return self.graficky_ukazatel(self._zivot, self._max_zivot)
 
     def bran_se(self, uder):
         """
         Simuluje bránění bojovníka.
         Parametr úder je velikost útoku nepřítele.
         """
-        zraneni = uder - (self.__obrana + self.__kostka.hod())
+        zraneni = uder - (self._obrana + self._kostka.hod())
         if zraneni > 0:
-            zprava = "{0} utrpěl poškození {1} hp.".format(self.__jmeno,
+            zprava = "{0} utrpěl poškození {1} hp.".format(self._jmeno,
                                                            zraneni)
-            self.__zivot = self.__zivot - zraneni
-            if self.__zivot < 0:
-                self.__zivot = 0
+            self._zivot = self._zivot - zraneni
+            if self._zivot < 0:
+                self._zivot = 0
                 zprava = zprava[:-1] + " a zemřel."
         else:
-            zprava = "{0} odrazil útok.".format(self.__jmeno)
-        self.__nastav_zpravu(zprava)
+            zprava = "{0} odrazil útok.".format(self._jmeno)
+        self._nastav_zpravu(zprava)
 
     def utoc(self, souper):
         """
         Simuluje útok bojovníka.
         Parametr soupeř je instance druhého bojovníka.
         """
-        uder = self.__utok + self.__kostka.hod()
-        zprava = "{0} útočí s úderem za {1} hp.".format(self.__jmeno, uder)
-        self.__nastav_zpravu(zprava)
+        uder = self._utok + self._kostka.hod()
+        zprava = "{0} útočí s úderem za {1} hp.".format(self._jmeno, uder)
+        self._nastav_zpravu(zprava)
         souper.bran_se(uder)
 
-    def __nastav_zpravu(self, zprava):
+    def _nastav_zpravu(self, zprava):
         """
         Nastaví text zprávy.
         """
@@ -130,7 +139,54 @@ class Bojovnik:
         return self.__zprava
 
 
+class Mag(Bojovnik):
+    """
+    Třída reprezentující mága do arény.
+    """
+
+    def __init__(self, jmeno, zivot, utok, obrana, kostka, mana, magicky_utok):
+        """
+        jmeno - jméno mága
+        zivot - maximální život mága
+        utok - normální útok mága
+        obrana - obrana mága
+        kostka - instance kostky
+        mana - maximální mana mága
+        magicky_utok - magický útok mága
+        """
+        super().__init__(jmeno, zivot, utok, obrana, kostka)
+        self.__mana = mana
+        self.__max_mana = mana
+        self.__magicky_utok = magicky_utok
+        self.__zprava = ""
+
+    def utoc(self, souper):
+        """
+        Simuluje útok bojovníka.
+        Parametr soupeř je instance druhého bojovníka.
+        """
+        # mana není naplněna
+        if self.__mana < self.__max_mana:
+            self.__mana = self.__mana + 10
+            if self.__mana > self.__max_mana:
+                self.__mana = self.__max_mana
+            super().utoc(souper)
+        # magický útok
+        else:
+            uder = self.__magicky_utok + self._kostka.hod()
+            zprava = "{0} použil magii za {1} hp.".format(self._jmeno, uder)
+            self._nastav_zpravu(zprava)
+            self.__mana = 0
+            souper.bran_se(uder)
+
+    def graficka_mana(self):
+        return self.graficky_ukazatel(self.__mana, self.__max_mana)
+
+
 class Arena:
+    """
+    Třída reprezentující bojovou arénu.
+    """
 
     def __init__(self, bojovnik_1, bojovnik_2, kostka):
         self.__bojovnik_1 = bojovnik_1
@@ -143,11 +199,10 @@ class Arena:
         """
         self.__vycisti_obrazovku()
         print("-------------- Aréna -------------- \n")
-        print("Zdraví bojovníků: \n")
-        print("{0} {1}".format(self.__bojovnik_1,
-                               self.__bojovnik_1.graficky_zivot()))
-        print("{0} {1}".format(self.__bojovnik_2,
-                               self.__bojovnik_2.graficky_zivot()))
+        print("Bojovníci: \n")
+        self.__vypis_bojovnika(self.__bojovnik_1)
+        self.__vypis_bojovnika(self.__bojovnik_2)
+        print("")
 
     def __vycisti_obrazovku(self):
         """
@@ -159,6 +214,12 @@ class Arena:
             _subprocess.call(["cmd.exe", "/C", "cls"])
         else:
             _subprocess.call(["clear"])
+
+    def __vypis_bojovnika(self, bojovnik):
+        print(bojovnik)
+        print("Život: {0}".format(bojovnik.graficky_zivot()))
+        if isinstance(bojovnik, Mag):
+            print("Mana: {0}".format(bojovnik.graficka_mana()))
 
     def __vypis_zpravu(self, zprava):
         """
@@ -174,8 +235,8 @@ class Arena:
         """
         import random as _random
         print("Vítejte v aréně!")
-        print("Dnes se utkají {0} s {1}!".format(self.__bojovnik_1,
-                                                 self.__bojovnik_2))
+        print("Dnes se utká {0} a {1}!".format(self.__bojovnik_1,
+                                               self.__bojovnik_2))
         print("Zápas může začít...", end=" ")
         input()
         # prohození bojovníků
@@ -199,8 +260,8 @@ class Arena:
 # vytvoření objektů
 kostka = Kostka(10)
 zalgoren = Bojovnik("Zalgoren", 100, 20, 10, kostka)
-shadow = Bojovnik("Shadow", 60, 18, 15, kostka)
-arena = Arena(zalgoren, shadow, kostka)
+gandalf = Mag("Gandalf", 60, 15, 12, kostka, 30, 45)
+arena = Arena(zalgoren, gandalf, kostka)
 # zápas
 arena.zapas()
 input()
